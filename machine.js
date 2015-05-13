@@ -62,9 +62,12 @@ var subscribers = JSON.parse(fs.readFileSync(path.join(__dirname, 'subscribers.j
 var sensors = JSON.parse(fs.readFileSync(path.join(__dirname, 'sensors.json'), 'utf8'));
 
 if(!properties.id){
-	properties.id = crypto.createHmac('sha1','very_secret_key').update(properties.lat +"-"+properties.lon).digest('base64');
-	fs.writeFile(path.join(__dirname, 'config.properties'),JSON.stringify(properties,null,'\t'),function(err){
-		console.log("id updated");
+	require('getmac').getMac(function(err,macAddress){
+		properties.id = crypto.createHmac('sha1','very_secret_key').update(macAddress).digest('base64');
+		
+		fs.writeFile(path.join(__dirname, 'config.properties'),JSON.stringify(properties,null,'\t'),function(err){
+			console.log("id updated");
+		});	
 	});
 }
 
