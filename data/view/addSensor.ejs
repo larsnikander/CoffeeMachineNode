@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Add Sensor </title>
+
+	<link rel="stylesheet" href="styles.css"/>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+</head>
+<body>
+	<div id="description">
+	<h1>Add sensor</h1>
+	<p>	On this site you can add sensors to my program so I fit to your needs. Fill out the form below and press update,
+		then I will restart and do the rest.</p>
+	
+	<% for (var i in sensors) { %>
+	<form method="post"  id="config_form">
+		<h3>Sensor <%= i %></h3>
+		<input type="hidden" name="sensor_number" value="<%= i %>">
+		Interface:<br>
+		<input type="text" name="interface" value="<%= sensors[i].interface %>">
+		<br>
+		URL
+		<br>
+		<input type="text" name="url" value="<%= sensors[i].url %>">
+		<br>
+		body:<br>
+		<% var bodyKey = 0 %>
+		<% for(key in sensors[i].body){ %>
+		<input name="body.<%= bodyKey %>.key" value="<%= key %>">
+		<input name="body.<%= bodyKey %>.value" value="<%= sensors[i].body[key] %>">
+		<br>
+		<% bodyKey++ } %>
+		<br>
+		<b>Program for Sensor <%= i %></b>
+		<br>
+		Pin:<br>
+		<input type="text" name="program.pin" value="<%= sensors[i].program.pin %>">
+		<br>
+		Thresshold:<br>
+		<input type="text" name="program.thresshold" value="<%= sensors[i].program.thresshold %>">
+		<br>
+		Activation: <br>
+		<select name="program.activation">
+			<option value="l">Lower</option>
+			<option value="h">Higher</option>
+		</select>
+		<br>
+		Entry:<br>
+		<select name="program.entry">
+			<option value="operating_start">Start of operation</option>
+			<option value="index">Start of webpage</option>
+		</select>
+		<br>
+		Reaction:<br>
+		<select name="program.reaction">
+			<option value="broadcast">Broadcast to subscribers</option>
+			<option value="show">Show value on webpage</option>
+		</select>
+		<br>
+		Extras:
+		<br>
+		<% for(var j in sensors[i].program.extras){ %>
+		<input name="program.extras" value="<%= sensors[i].program.extras[j] %>">
+		<br>
+		<% } %>
+		Description <br>
+		<input type="text" name="program.description" value="<%= sensors[i].program.description %>">
+		<br>
+		<input  type="submit" value="Update this sensor">
+
+	</form>
+	<% } %>
+	<br>
+	<br>
+	</div>
+	<div id="coffeeButton">
+		<div id="innerText">
+			Update Information
+		</div>
+	</div>
+        <script src="button_config_script.js"></script>
+</body>
+</html>
+

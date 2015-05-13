@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= config.name %> - <%= config.location %></title>
+
+	<link rel="stylesheet" href="styles.css"/>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+</head>
+<body>
+	<div id="description">
+	<h1>Hello! I'm <%= config.name %></h1>
+	<p><%= config.subtitle %>.</p>
+	<p>	On this site you can configure my properties so I fit to your needs. Fill out the form below and press update,
+		then I will restart and do the rest.</p>
+	
+	<form method="post"  id="config_form">
+		<h3>General Options</h3>
+		Name:<br>
+		<input type="text" name="name" value="<%= config.name %>">
+		<br>
+		Latitude & Longitude:
+		<br>
+		<input type="text" name="lat" value="<%= config.lat %>">
+		<input type="text" name="lon" value="<%= config.lon %>">
+		<br>
+		Subtitle:<br>
+		<textarea rows="4" cols="50" name="subtitle"><%= config.subtitle %></textarea>
+		<br>
+		Capacity:<br>
+		<input type="text" name="capacity" value="<%= config.capacity %>"> people in queue
+		<br>
+		Button Text:<br>
+		<input type="text" name="button_text" value="<%= config.button_text %>">
+		<br>
+		<br>
+		<h3>Requests</h3>
+		Request Type:<br>
+		<select name="request_type">
+  			<option value="boolean" <% if(config.request_type=='boolean'){ %><%= 'selected' %> <% } %>>Yes/No</option>
+  			<option value="list" <% if(config.request_type=='list'){ %><%= 'list' %> <% } %>>Options</option>
+		</select>
+		<br>
+		Request Message:<br>
+		<textarea name="request_text" rows="4" cols ="50"  ><%= config.request_text %></textarea>
+		<br>
+		Timeout for requests:<br>
+		<input type="text" name="timeout" value="<%= config.timeout %>"> in milliseconds
+		<br>
+		<br>
+		<h3>Accepts</h3>
+		Accept Message:<br>
+		<textarea name="accept_text" rows="4" cols ="50" ><%= config.accept_text %></textarea>
+		<br>
+		Accept Extras:<br>
+		<input type="checkbox" name="accept_extras" value="show-map" <% if(config.accept_extras.indexOf('show-map')>=0){ %> <%= 'checked' %> <% } %>> Show on map
+		<br>
+		<h3>Rejects</h3>
+		Rejection Message:<br>
+		<textarea name="rejection_text" rows="4" cols ="50" ><%= config.rejection_text %></textarea>
+		<br>
+		Rejection Extras:<br>
+		<input type="checkbox" name="rejection_extras" value="show-map" <% if(config.rejection_extras.indexOf('show-map')>=0){ %> <%= 'checked' %> <% } %>> Show on map
+		<br>
+		<br>
+		<h3>Ready</h3>	
+		Ready Message:<br>
+		<textarea name="ready_text"  rows="4" cols ="50"><%= config.ready_text %></textarea>
+		<br>
+		Ready Extras:<br>
+		<input type="checkbox" name="ready_extras" value="show-map" <% if(config.ready_extras.indexOf('show-map')>=0){ %> <%= 'checked' %> <% } %>> Show on map
+		<br>
+		<br>
+	
+		Operation Message (JavaScript):<br>
+		<textarea name="operation" value="operation" rows="4" cols ="50"><%= config.operation %></textarea>
+		<br>
+		
+		<h3> Advanced Options </h3>
+		Local Port:<br>
+		<input type="text" name="port" value="<%= config.port %>">
+		<br>
+		<br>
+		Routing Server:<br>
+		<input type="text" name="routing_server" value="<%= config.routing_server %>">
+		<br>
+		Routing Server Port:<br>
+		<input type="text" name="routing_server_port" value="<%= config.routing_server_port %>">
+		<br>
+
+		<br>
+		<br>
+
+	</form>
+	</div>
+	<div id="coffeeButton" onClick="javascript:document.forms[0].submit();">
+		<div id="innerText">
+			Update Information
+		</div>
+	</div>
+        <script src="button_config_script.js"></script>
+</body>
+</html>
+

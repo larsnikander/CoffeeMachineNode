@@ -1,0 +1,14 @@
+{
+	reactions = [
+		{	
+			"name":"broadcast",
+			"description":"Broadcast to devices",
+			"extras":["queue","subscribers","rejections"]
+		},
+		{
+			"name":"show",
+			"Description":"show on webpage",
+			"extras":[]
+		}],
+	
+}
