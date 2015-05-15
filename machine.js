@@ -63,7 +63,7 @@ var sensors = JSON.parse(fs.readFileSync(path.join(__dirname, 'sensors.json'), '
 
 if(!properties.id){
 	require('getmac').getMac(function(err,macAddress){
-		properties.id = crypto.createHmac('sha1','very_secret_key').update(macAddress).digest('base64');
+		properties.id = crypto.createHmac('sha1',"very_secret_key").update(macAddress+":"+properties.port).digest('base64');
 		
 		fs.writeFile(path.join(__dirname, 'config.properties'),JSON.stringify(properties,null,'\t'),function(err){
 			console.log("id updated");
@@ -89,7 +89,8 @@ app.get('/',function(req,res){
 	var resultObject = {
 		ejs:'index.ejs',
 		response:{
-			config:properties
+			config:properties,
+			sensors:sensors
 		}
 	}
 
@@ -124,7 +125,17 @@ app.get('/clearSubscribers',function(req,res){
 
 
 	res.end("OK, shutting down")
-	server.close();
+});
+
+// Force stop operation
+app.post('/forceStop',function(req,res){
+	var messageObject = {
+		body: {
+			value : "true"
+		}
+	}
+	sensorInput(messageObject);	
+	res.end("OK, stopping operation")
 });
 
 
@@ -242,7 +253,6 @@ function subscribe(messageObject){
 		console.log("subscriber database updated");
 	    });
 	}
-
 	var message = {
 	    config:properties,
 	    time:(new Date()),
@@ -253,6 +263,7 @@ function subscribe(messageObject){
 	}
 
 	broadcast([messageObject.body.id],message);
+
 }
 
 // Unsubscribe user
@@ -265,6 +276,18 @@ function unsubscribe(messageObject){
 	        return console.log(err);
 	    }
 	});
+
+	var message = {
+	    config:properties,
+	    time:(new Date()),
+	    type:'unsubscribed',
+	    description:{
+		text:'You are now unsubscribed from this machine!'
+	    }  
+	}
+
+	broadcast([messageObject.body.id],message);
+
 	console.log("subscribers are now: ");
 	console.log(subscribers);
 

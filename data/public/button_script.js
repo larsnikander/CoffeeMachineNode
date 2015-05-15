@@ -2,8 +2,12 @@ var text = "Notifying subscribers.. "
 
 var seconds = document.getElementById("seconds").innerHTML;
 seconds = (seconds /1000);
+var sensors = document.getElementById("sensors").innerHTML;
+sensors *= 2;
+sensors /= 2;
 
-function makeCoffee(){
+function makeCoffee(){	
+	document.getElementById("coffeeButton").removeEventListener("click", makeCoffee);
 	
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.open("GET","startOperation",true);
@@ -22,6 +26,7 @@ function makeCoffee(){
   				if (xmlhttp.readyState==4 && xmlhttp.status==200){
 					var response = JSON.parse(xmlhttp.responseText);
 					
+					if(sensors > 0){
     					document.getElementById("innerText").innerHTML=response.text;
 					var finishInterval = setInterval(function(){
 						var xmlhttp2 = new XMLHttpRequest();
@@ -35,6 +40,16 @@ function makeCoffee(){
        					 	xmlhttp2.open("GET","getState",true);
         				 	xmlhttp2.send();
 					},1000);
+					} else {
+    					document.getElementById("innerText").innerHTML=response.text + " (press this button when done)";
+						
+						document.getElementById("coffeeButton").addEventListener("click",function(){
+							var xmlhttp2 = new XMLHttpRequest();
+       						 	xmlhttp2.open("POST","forceStop",true);
+       		 				 	xmlhttp2.send();
+							location.reload();							
+						});
+					}
     				}
 			}
 
