@@ -188,19 +188,16 @@ app.get('/getState',function(req,res){
 // WebSocketClient
 var client = new WebSocketClient();
 state = UNREGISTERED;
-// If connection is not available, print problem
-client.on('connectFailed', function(error) {
-    console.log('Connect Error: ' + error.toString());
-});
  
 // WebSocket connection to server
 client.on('connect', function(connection) {
     console.log('WebSocket Client Connected');
     state = REGISTERED;
     connection.on('error', function(error) {
-        console.log("Connection Error: " + error.toString());
+    	console.log("###Connection Error: " + error.toString());
     });
     connection.on('close', function() {
+    	setTimeout(client.connect('ws://'+routingServer+':8080/', 'coffee-protocol'),5000);
         console.log('echo-protocol Connection Closed');
     });
     connection.on('message', function(message) {
@@ -222,6 +219,10 @@ client.on('connect', function(connection) {
 		case 'response':
 			response(messageObject);
 			break;
+		case 'request':
+			console.log("got request from another machine")
+			console.log(messageObject);
+			break;
 		default:
 		
 	    }
@@ -237,8 +238,16 @@ client.on('connect', function(connection) {
    connection.sendUTF(JSON.stringify(registrationMessage));
    connectionToServer = connection;	
 });
+
+client.on('connectFailed', function(error) {
+    setTimeout(client.connect('ws://'+routingServer+':8080/', 'coffee-protocol'),5000);
+    console.log('Connect Error: ' + error.toString());
+});
+ 
  
 client.connect('ws://'+routingServer+':8080/', 'coffee-protocol');
+
+
 
 // Subscribe user
 function subscribe(messageObject){
