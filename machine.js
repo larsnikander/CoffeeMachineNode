@@ -231,7 +231,7 @@ client.on('connect', function(connection) {
    var registrationMessage = {
 	intention:'register',
 	body : {
-	    id:properties.id
+	    config:properties
 	}
    }   
 
