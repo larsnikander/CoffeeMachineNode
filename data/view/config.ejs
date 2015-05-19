@@ -11,7 +11,8 @@
 	<div id="description">
 	<h1>Hello! I'm <%= config.name %></h1>
 	<p><%= config.subtitle %></p>
-	<p>NFC TAG: <%= config.routing_server %>/<%= config.id %></p>
+	<p>NFC TAG: <%= config.routing_server %>:<%= config.routing_server_port %>/<%= config.id %></p>
+	<a rel='nofollow' href='http://www.qrcode-generator.de' border='0' style='cursor:default'></a><img src='https://chart.googleapis.com/chart?cht=qr&chl=p2papp://<%= config.routing_server %>%3A<%= config.routing_server_port %>%2F<%= config.id %>&chs=180x180&choe=UTF-8&chld=L|2' alt=''>
 	<p>	On this site you can configure my properties so I fit to your needs. Fill out the form below and press update,
 		then I will restart and do the rest.</p>
 	
