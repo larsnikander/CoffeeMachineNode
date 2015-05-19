@@ -45,6 +45,11 @@ function makeCoffee(){
 						
 						document.getElementById("coffeeButton").addEventListener("click",function(){
 							var xmlhttp2 = new XMLHttpRequest();
+  							if (xmlhttp2.readyState==4 && xmlhttp2.status==200){
+    									var response2 = JSON.parse(xmlhttp2.responseText);
+									if(response2.state == 3)
+										location.reload();
+    							}
        						 	xmlhttp2.open("POST","forceStop",true);
        		 				 	xmlhttp2.send();
 							location.reload();							
