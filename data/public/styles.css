@@ -45,6 +45,20 @@ form  {
 	bottom:0;
 	right:0;
 }
+.wrapper{
+	margin-right:30px;
+	border-top-style: solid;
+	border-width: 1px;
+	border-color: #AAA;
+}
+
+.subscriberBox {
+	width : 50%;
+	word-wrap:break-word;
+	background-color: lightgreen;
+	padding: 10px;
+
+}
 
 #description {
 	margin-left:30px;

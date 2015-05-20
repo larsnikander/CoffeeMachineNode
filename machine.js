@@ -607,6 +607,49 @@ app.post('/addSensor',function(req,res){
 });
 
 
+
+// Manage Subscribers
+app.get('/manageSubscribers',function(req,res){
+	console.log("someone is in managing subscribers");
+
+	var resultObject = {
+		ejs:'manageSubscribers.ejs',
+		response:{
+			subscribers:subscribers
+		}
+	}
+	handleContentType(req,res,resultObject);
+});
+
+// Manage Subscribers post
+app.post('/manageSubscribers',function(req,res){
+	console.log(req.body);
+
+	switch(req.body.action){
+		case "add":
+			subscribers.push(req.body.id);
+		break;
+		case "remove":
+			subscribers.splice(subscribers.indexOf(req.body.id),1);
+		break;
+	}
+
+	fs.writeFile(path.join(__dirname, 'subscribers.json'),JSON.stringify(subscribers),function(err){
+	    if(err) {
+	        return console.log(err);
+	    }
+	    console.log("subscriber database updated");
+	});		
+
+	var resultObject = {
+		ejs:'manageSubscribers.ejs',
+		response:{
+			subscribers:subscribers
+		}
+	}
+	handleContentType(req,res,resultObject);
+});
+
 /******** Depricated Functions ********/
 
 // Close Queue (Depricated)
@@ -638,6 +681,7 @@ app.get('/subscribe',function(req,res){
 		c = 201;
 		d = 'you are already subscribed to this coffee machine';
 	}
+
 
 
 	var resultObject = {

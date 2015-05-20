@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Manage Subscribers </title>
+
+	<link rel="stylesheet" href="styles.css"/>
+
+</head>
+<body>
+	<div id="description">
+	<h1>Manage Subscribers</h1>
+	<p>	On this site you can manage subscribers on this machine.</p>
+	<br>
+	<form method="post">
+		<input type="hidden" name="action" value="add"/>
+		<textarea name="id" rows="4" cols="71"></textarea><br>
+		<input type="submit" value="+ Add new subscriber">
+	</form
+	<br>
+	<br>
+	<% for(subscriber in subscribers) { %>
+	<div class="wrapper">
+		<form  method="post">
+			<p>Registration ID:</p>
+			<input type="hidden" name="id" value="<%= subscribers[subscriber] %>"/>
+			<input type="hidden" name="action" value="remove"/>
+			<div class="subscriberBox"> <%= subscribers[subscriber] %> </div>
+			<br>
+			<input type="submit" value="Remove this subscriber">
+		</form>
+	</div>
+	<% } %>
+</body>
+</html>
+
