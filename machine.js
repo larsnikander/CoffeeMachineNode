@@ -492,7 +492,8 @@ app.get('/config',function(req,res){
 });
 
 app.post('/config',function(req,res){
-	
+	console.log(req.body);
+
 	for(var key in properties){
 	//	console.log(key);
 		if(key.indexOf('extras')!=-1){

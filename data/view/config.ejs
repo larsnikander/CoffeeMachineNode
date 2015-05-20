@@ -36,6 +36,13 @@
 		Button Text:<br>
 		<input type="text" name="button_text" value="<%= config.button_text %>">
 		<br>
+		Type:<br>
+		<select name="type">
+			<option value="food"<% if(config.type=='food'){ %><%= 'selected' %> <% } %>>Food</option>
+			<option value="drink"<% if(config.type=='drink'){ %><%= 'selected' %> <% } %>>Drink</option>
+			<option value="misc"<% if(config.type=='misc'){ %><%= 'selected' %> <% } %>>Misc</option>
+		</select>
+		<br>
 		<br>
 		<h3>Requests</h3>
 		Request Type:<br>
