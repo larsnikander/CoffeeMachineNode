@@ -12,7 +12,9 @@
 	<h1>Add sensor</h1>
 	<p>	On this site you can add sensors to my program so I fit to your needs. Fill out the form below and press update,
 		then I will restart and do the rest.</p>
-	
+	<br>
+	<input type="button" value="+ Add New Sensor" id="sensorButton"/>
+	<br>
 	<% for (var i in sensors) { %>
 	<form method="post"  id="config_form">
 		<h3>Sensor <%= i %></h3>
@@ -20,11 +22,11 @@
 		Interface:<br>
 		<input type="text" name="interface" value="<%= sensors[i].interface %>">
 		<br>
-		URL
+		URL:
 		<br>
 		<input type="text" name="url" value="<%= sensors[i].url %>">
 		<br>
-		body:<br>
+		Body:<br>
 		<% var bodyKey = 0 %>
 		<% for(key in sensors[i].body){ %>
 		<input name="body.<%= bodyKey %>.key" value="<%= key %>">
@@ -67,19 +69,27 @@
 		Description <br>
 		<input type="text" name="program.description" value="<%= sensors[i].program.description %>">
 		<br>
+		<input type="checkbox" name="remove" value="remove"> Remove sensor.
+		<br>
 		<input  type="submit" value="Update this sensor">
 
 	</form>
 	<% } %>
-	<br>
-	<br>
 	</div>
+
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
 	<div id="coffeeButton">
 		<div id="innerText">
 			Update Information
 		</div>
 	</div>
-        <script src="button_config_script.js"></script>
+        <script src="addsensor.js"></script>
 </body>
 </html>
 

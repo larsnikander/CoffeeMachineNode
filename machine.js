@@ -407,7 +407,7 @@ function notifyApplicants(){
 function broadcast(listOfDevices,message){
 	if(listOfDevices.length ==0)
 		return;
-
+	
    	currentReq = {
 		intention:"broadcast",
 		body:{
@@ -546,34 +546,50 @@ app.get('/addSensor',function(req,res){
 app.post('/addSensor',function(req,res){
 	
 	console.log(req.body);
-	
+
+		
 	var sensorIndex = req.body.sensor_number;
 
 
-	for(var key in req.body){
-		if(req.body[key]!=''){
-			if(key.indexOf('program.')!=-1){
-				if(key.indexOf('extras')==-1){
-					console.log(key.substring(8) +" - " +req.body[key]);
-					sensors[sensorIndex].program[key.substring(8)] = req.body[key];
+	if(!sensors[sensorIndex])
+		sensors.push({
+			body:{
+			},
+			program:{
+				extras:[]
+			}
+		});
+
+	if(req.body.remove){
+		sensors.splice(sensorIndex,1);
+
+	} else {
+		for(var key in req.body){
+			if(req.body[key]!=''){
+				if(key.indexOf('program.')!=-1){
+					if(key.indexOf('extras')==-1){
+						console.log(key.substring(8) +" - " +req.body[key]);
+						sensors[sensorIndex].program[key.substring(8)] = req.body[key];
+					} else {
+						if(sensors[sensorIndex].program.extras.indexOf(req.body[key])==-1)
+							sensors[sensorIndex].program.extras.push(req.body[key]);
+					}
 				} else {
-					if(sensors[sensorIndex].program.extras.indexOf(req.body[key])==-1)
-						sensors[sensorIndex].program.extras.push(req.body[key]);
-				}
-			} else {
-				if(key.indexOf('body')==-1){
-					sensors[sensorIndex][key] = req.body[key];
-				} else {
-					if(key.indexOf('value')==-1){
-					console.log(key);
-					sensors[sensorIndex].body[req.body[key]] = req.body[key.substring(0,key.indexOf('key'))+'value'];
+					if(key.indexOf('body')==-1){
+						sensors[sensorIndex][key] = req.body[key];
+					} else {
+						if(key.indexOf('value')==-1){
+						console.log(key);
+						sensors[sensorIndex].body[req.body[key]] = req.body[key.substring(0,key.indexOf('key'))+'value'];
+						}
 					}
 				}
+			}else {
+			
 			}
-		}else {
-		
 		}
 	}
+
 
 	fs.writeFile(path.join(__dirname, 'sensors.json'),JSON.stringify(sensors,null,'\t'),function(err){
 		console.log("sensors updated");
