@@ -447,6 +447,8 @@ function startRoutine(entry){
 			   res.setEncoding('utf8');
 	 		   res.on('data', function (chunk) {
 			        console.log("body: " + chunk);
+	 		   		if(JSON.parse(chunk)["error"])
+	 		   			startRoutine(entry);
 			    });
 			});
 
