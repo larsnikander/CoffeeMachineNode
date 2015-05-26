@@ -52,7 +52,7 @@ function makeCoffee(){
     							}
        						 	xmlhttp2.open("POST","forceStop",true);
        		 				 	xmlhttp2.send();
-							location.reload();							
+							//location.reload();							
 						});
 					}
     				}
