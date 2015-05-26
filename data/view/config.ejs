@@ -17,6 +17,7 @@
 	<p>	On this site you can configure my properties so I fit to your needs. Fill out the form below and press update,
 		then I will restart and do the rest.</p>
 	
+	
 	<form method="post"  id="config_form">
 		<h3>General Options</h3>
 		Name:<br>
@@ -24,8 +25,11 @@
 		<br>
 		Latitude & Longitude:
 		<br>
-		<input type="text" name="lat" value="<%= config.lat %>">
-		<input type="text" name="lon" value="<%= config.lon %>">
+		<div id="demo">
+		<input type="text" name="lat" id="lat" value="<%= config.lat %>">
+		<input type="text" name="lon" id="lon" value="<%= config.lon %>">
+		<br>
+		</div>
 		<br>
 		Subtitle:<br>
 		<textarea rows="4" cols="50" name="subtitle"><%= config.subtitle %></textarea>
@@ -87,6 +91,7 @@
 		<br>
 		
 		<h3> Advanced Options </h3>
+		<p> You need to restart the server in order for these options to take place. </p>
 		Local Port:<br>
 		<input type="text" name="port" value="<%= config.port %>">
 		<br>
@@ -97,7 +102,9 @@
 		Routing Server Port:<br>
 		<input type="text" name="routing_server_port" value="<%= config.routing_server_port %>">
 		<br>
-
+		<input type="checkbox" name="hidden" value="true"  <% if(config.hidden == "true"){ %> checked <% } %>/>
+		Is hidden on routing server
+		<br>
 		<br>
 		<br>
 		<br>

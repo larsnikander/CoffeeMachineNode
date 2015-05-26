@@ -18,6 +18,8 @@ var OPEN_FOR_REQUEST = 3;
 var NOTIFYING_SUBSCRIBERS = 4;
 var NOTIFY_APPLICANTS = 5;
 var OPERATING = 6;
+var NOTIFYING_SENSoR = 7;
+var SENSOR_IS_RUNNING = 8;
 
 /* 
  *     	   Program Flow
@@ -60,6 +62,8 @@ var state = INITIAL;
 var properties = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.properties'), 'utf8'));
 var subscribers = JSON.parse(fs.readFileSync(path.join(__dirname, 'subscribers.json'), 'utf8'));
 var sensors = JSON.parse(fs.readFileSync(path.join(__dirname, 'sensors.json'), 'utf8'));
+var statistics = JSON.parse(fs.readFileSync(path.join(__dirname, 'statistics.json'), 'utf8'));
+
 
 if(!properties.id){
 	require('getmac').getMac(function(err,macAddress){
@@ -254,6 +258,18 @@ function subscribe(messageObject){
 	console.log("subscribe event received:");
 	console.log(messageObject);
 	if(subscribers.indexOf(messageObject.body.id)==-1){
+
+		if(!statistics[messageObject.body.id]){
+			statistics[messageObject.body.id] = 0;
+			fs.writeFile(path.join(__dirname, 'statistics.json'),JSON.stringify(statistics),function(err){
+				if(err) {
+				    return console.log(err);
+				}
+				console.log("statistics database updated");
+		    });
+		}
+
+
 	    subscribers.push(messageObject.body.id);
 	    fs.writeFile(path.join(__dirname, 'subscribers.json'),JSON.stringify(subscribers),function(err){
 		if(err) {
@@ -278,8 +294,10 @@ function subscribe(messageObject){
 // Unsubscribe user
 function unsubscribe(messageObject){
 	console.log("unsubscribing: " + messageObject.body.id);
+	
 	if(subscribers.indexOf(messageObject.body.id)> -1)
 	subscribers.splice(subscribers.indexOf(messageObject.body.id),1);
+	
 	fs.writeFile(path.join(__dirname, 'subscribers.json'),JSON.stringify(subscribers),function(err){
 	    if(err) {
 	        return console.log(err);
@@ -375,6 +393,7 @@ function reject(rejectionId){
 
 // Notify applicants from queue and rejections
 function notifyApplicants(){
+
 	var message = {
 	    config:properties,
 	    time:(new Date()),
@@ -449,6 +468,9 @@ function startRoutine(entry){
 			        console.log("body: " + chunk);
 	 		   		if(JSON.parse(chunk)["error"])
 	 		   			startRoutine(entry);
+	 		   		else {
+	 		   			state = 8;
+	 		   		}
 			    });
 			});
 
@@ -473,6 +495,19 @@ function sensorInput(messageObject){
 		}
 		broadcast(queue,message);
 		state = OPEN_FOR_REQUEST;
+
+
+		for(i in queue){
+			statistics[queue[i]] += 1;
+		}
+
+		fs.writeFile(path.join(__dirname, 'statistics.json'),JSON.stringify(statistics),function(err){
+				if(err) {
+				    return console.log(err);
+				}
+				console.log("statistics database updated");
+		});
+
 		queue = [];
 	}
 }
@@ -496,6 +531,9 @@ app.get('/config',function(req,res){
 app.post('/config',function(req,res){
 	console.log(req.body);
 
+	if(req.body.port != properties.port)
+		properties.id = crypto.createHmac('sha1',"very_secret_key").update(properties.id+":"+properties.port).digest('base64');
+
 	for(var key in properties){
 	//	console.log(key);
 		if(key.indexOf('extras')!=-1){
@@ -508,6 +546,13 @@ app.post('/config',function(req,res){
 		}
 	}
 		
+	if(req.body.hidden){
+		console.log("hidden");
+		properties.hidden = "true";
+	} else {
+		console.log("not hidden");
+		properties.hidden = "false";
+	}
 
 	for(var key in req.body){
 		if(req.body[key]!=''){
@@ -517,6 +562,7 @@ app.post('/config',function(req,res){
 			}
 		}
 	}
+
 
 	fs.writeFile(path.join(__dirname, 'config.properties'),JSON.stringify(properties,null,'\t'),function(err){
 		console.log("properties updated");
@@ -630,10 +676,40 @@ app.post('/manageSubscribers',function(req,res){
 
 	switch(req.body.action){
 		case "add":
+			var message = {
+			    config:properties,
+			    time:(new Date()),
+			    type:'subscription',
+			    description:{
+				text:'You are now subscribed to this machine!'
+			    }  
+			}
+
+			broadcast([req.body.id],message);
 			subscribers.push(req.body.id);
+			if(!statistics[req.body.id]){
+			statistics[req.body.id] = 0;
+			fs.writeFile(path.join(__dirname, 'statistics.json'),JSON.stringify(statistics),function(err){
+				if(err) {
+				    return console.log(err);
+				}
+				console.log("statistics database updated");
+		    });
+			}
+
 		break;
 		case "remove":
 			subscribers.splice(subscribers.indexOf(req.body.id),1);
+			var message = {
+			    config:properties,
+			    time:(new Date()),
+			    type:'unsubscribed',
+			    description:{
+				text:'You are now unsubscribed from this machine!'
+			    }  
+			}
+
+			broadcast([req.body.id],message);
 		break;
 	}
 
@@ -644,10 +720,28 @@ app.post('/manageSubscribers',function(req,res){
 	    console.log("subscriber database updated");
 	});		
 
+
+	
+
 	var resultObject = {
 		ejs:'manageSubscribers.ejs',
 		response:{
 			subscribers:subscribers
+		}
+	}
+	handleContentType(req,res,resultObject);
+});
+
+
+
+// Get statistics
+app.get('/statistics',function(req,res){
+	console.log("someone is in managing subscribers");
+
+	var resultObject = {
+		ejs:'statistics.ejs',
+		response:{
+			statistics:statistics
 		}
 	}
 	handleContentType(req,res,resultObject);
