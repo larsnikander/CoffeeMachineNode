@@ -21,39 +21,43 @@ function makeCoffee(){
 		document.getElementById("innerText").innerHTML = text + seconds+"sec";
 		if(seconds == 0){
 			clearInterval(interval);
-
+			
 			xmlhttp.onreadystatechange=function(){
   				if (xmlhttp.readyState==4 && xmlhttp.status==200){
 					var response = JSON.parse(xmlhttp.responseText);
 					
-					if(sensors > 0){
-    					document.getElementById("innerText").innerHTML=response.text;
-					var finishInterval = setInterval(function(){
-						var xmlhttp2 = new XMLHttpRequest();
-						xmlhttp2.onreadystatechange=function(){
-  							if (xmlhttp2.readyState==4 && xmlhttp2.status==200){
-    									var response2 = JSON.parse(xmlhttp2.responseText);
-									if(response2.state == 3)
-										location.reload();
-    							}
-  						}
-       					 	xmlhttp2.open("GET","getState",true);
-        				 	xmlhttp2.send();
-					},1000);
-					} else {
-    					document.getElementById("innerText").innerHTML=response.text + " (press this button when done)";
-						
-						document.getElementById("coffeeButton").addEventListener("click",function(){
+					if(response.queue.length == 0){
+						document.getElementById("innerText").innerHTML = response.text + "(reloading in 5 seconds)";
+						setTimeout('location.reload()',5000);
+					} else {									
+						if(sensors > 0){
+	    					document.getElementById("innerText").innerHTML=response.text;
+						var finishInterval = setInterval(function(){
 							var xmlhttp2 = new XMLHttpRequest();
-  							if (xmlhttp2.readyState==4 && xmlhttp2.status==200){
-    									var response2 = JSON.parse(xmlhttp2.responseText);
-									if(response2.state == 3)
+							xmlhttp2.onreadystatechange=function(){
+	  							if (xmlhttp2.readyState==4 && xmlhttp2.status==200){
+	    									var response2 = JSON.parse(xmlhttp2.responseText);
+										if(response2.state == 3)
+											location.reload();
+	    							}
+	  						}
+	       					 	xmlhttp2.open("GET","getState",true);
+	        				 	xmlhttp2.send();
+						},1000);
+						} else {
+    						document.getElementById("innerText").innerHTML=response.text + " (press this button when done)";
+							document.getElementById("coffeeButton").addEventListener("click",function(){
+								var xmlhttp2 = new XMLHttpRequest();
+	  							xmlhttp2.onreadystatechange=function(){
+									if (xmlhttp2.readyState==4 && xmlhttp2.status==200){
 										location.reload();
-    							}
-       						 	xmlhttp2.open("POST","forceStop",true);
-       		 				 	xmlhttp2.send();
-							//location.reload();							
-						});
+	    								}
+								}
+	       						 	xmlhttp2.open("POST","forceStop",true);
+	       		 				 	xmlhttp2.send();
+								//location.reload();							
+							});
+						}
 					}
     				}
 			}

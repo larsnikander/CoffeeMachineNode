@@ -201,7 +201,7 @@ client.on('connect', function(connection) {
     	console.log("###Connection Error: " + error.toString());
     });
     connection.on('close', function() {
-    	setTimeout(client.connect('ws://'+routingServer+':8080/', 'coffee-protocol'),5000);
+    	setTimeout(function(){client.connect('ws://'+routingServer+':8080/', 'coffee-protocol')},5000);
         console.log('echo-protocol Connection Closed');
     });
     connection.on('message', function(message) {
@@ -244,7 +244,7 @@ client.on('connect', function(connection) {
 });
 
 client.on('connectFailed', function(error) {
-    setTimeout(client.connect('ws://'+routingServer+':8080/', 'coffee-protocol'),5000);
+    setTimeout(function(){client.connect('ws://'+routingServer+':8080/', 'coffee-protocol')},5000);
     console.log('Connect Error: ' + error.toString());
 });
  
